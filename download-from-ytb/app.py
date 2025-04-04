@@ -32,19 +32,25 @@ st.title("YouTube Video Downloader 🎥")    # Title of the web app
 # User inputs
 url = st.text_input("Enter YouTube URL:")   # Asks for a YOUTUBE url specifically
 # Format choice shows up as a bullet point list that can be checked
-format_choice = st.radio("Select Format:", ("MP4 (Video)", "MP3 (Audio)"))
+format_choice = st.radio("Select Format:", ("MP4 (Video)", "MP3 (Audio)", "M4A (Uncompressed audio)"))
 
 if st.button("Download"):
     if url:
         # Define output filename
         # Resulting filename will be: [video's title on Youtube].[format (mp3 or mp4)]
-        output_format = "mp4" if format_choice == "MP4 (Video)" else "mp3"
+        if format_choice == "MP4 (Video)":
+            output_format = "mp4"
+        elif format_choice == "MP3 (Audio)":
+            output_format = "mp3"
+        else:
+            output_format = "m4a"
+
         output_filename = "%(title)s.%(ext)s"
 
         # Define the yt-dlp command
-        if format_choice == "MP4 (Video)":
+        if output_format == "mp4":
             command = [
-                "yt-dlp", "-v",
+                "yt-dlp",
                 # Downloads mp4 format and merges with m4a for best quality if available
                 # else, downloads best mp4 available quality.
                 "-f", "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]",
@@ -52,11 +58,18 @@ if st.button("Download"):
                 url
             ]
 
-        else:  # MP3 (Audio)
+        elif output_format == "mp3":  # MP3 (Audio)
             command = [
                 "yt-dlp",
-                "-x", "--audio-format", "mp3",
+                "-x", "--audio-format", output_format,
                 "--audio-quality", "0",
+                "-o", output_filename,
+                url
+            ]
+        else:
+            command = [
+                "yt-dlp",
+                "-f", "ba[ext=m4a]",
                 "-o", output_filename,
                 url
             ]
@@ -84,7 +97,7 @@ if st.button("Download"):
         else:
             if output_format == "mp4":
                 st.error("Error downloading video.")
-            elif output_format == "mp3":
+            elif output_format == "mp3" or output_format == "m4a":
                 st.error("Error downloading audio.")
             else:
                 st.error("Error downloading file.")

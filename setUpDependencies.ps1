@@ -1,4 +1,5 @@
 ﻿pip install streamlit yt-dlp
 pip install streamlit
-pip install subprocess
-pip install os
+pip install ffmpeg
+
+winget install ffmpeg
