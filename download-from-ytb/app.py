@@ -1,7 +1,9 @@
 #author: mercierd575
-#v0.1.0
-#date: 2025-04-03
-#brief: this web app program takes an URL as an imput and downloads a mp3 or mp4 file
+#v0.1.1
+#date:
+# v0.1.0 2025-04-03
+# v0.1.1 2025-04-04
+#brief: this web app program takes an URL as an input and downloads a mp3 or mp4 file
 #       depending on the user's choice regarding the format.
 #       it has to be run on PowerShell using the command
 #       streamlit run app.py
