@@ -12,6 +12,8 @@
 #       streamlit cache clear
 #       And restart the app with
 #       streamlit run app.py
+#       Do not forget to download ffmpeg and add it to PATH variables
+#       to run this program
 #
 #DISCLAIMER: Do not use this app for any illegal purposes. I may not be held
 #            accountable for any legal troubles following the use of this app.
@@ -21,6 +23,7 @@ import subprocess               # Using subprocess to run yt-dlp (a command line
                                 # directly from python
 import os                       # os is used to list downloaded files after using yt-dlp
                                 # and remove the downloaded file after serving it to the user
+import ffmpeg as converter      # Using ffmpeg to convert m4a audio files to mp3
 
 st.title("YouTube Video Downloader 🎥")    # Title of the web app
 
@@ -34,18 +37,27 @@ if st.button("Download"):
         # Define output filename
         # Resulting filename will be: [video's title on Youtube].[format (mp3 or mp4)]
         output_format = "mp4" if format_choice == "MP4 (Video)" else "mp3"
-        output_filename = f"%(title)s.%(ext)s"
+        output_filename = "%(title)s.%(ext)s"
 
         # Define the yt-dlp command
-        command = [
-            "yt-dlp",
-            "-o", output_filename,
-            "-f", "bestaudio/best" if output_format == "mp3" else "best",
-            "--extract-audio" if output_format == "mp3" else "",
-            "--audio-format" if output_format == "mp3" else "",
-            output_format if output_format == "mp3" else "",
-            url,
-        ]
+        if format_choice == "MP4 (Video)":
+            command = [
+                "yt-dlp", "-v",
+                # Downloads mp4 format and merges with m4a for best quality if available
+                # else, downloads best mp4 available quality.
+                "-f", "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]",
+                "-o", output_filename,
+                url
+            ]
+
+        else:  # MP3 (Audio)
+            command = [
+                "yt-dlp",
+                "-x", "--audio-format", "mp3",
+                "--audio-quality", "0",
+                "-o", output_filename,
+                url
+            ]
 
         command = [c for c in command if c]  # Remove empty strings
 
@@ -68,6 +80,11 @@ if st.button("Download"):
             else:
                 st.error("Download failed. Try again!")
         else:
-            st.error("Error downloading video.")
+            if output_format == "mp4":
+                st.error("Error downloading video.")
+            elif output_format == "mp3":
+                st.error("Error downloading audio.")
+            else:
+                st.error("Error downloading file.")
     else:
         st.warning("Please enter a valid URL.")
