@@ -27,7 +27,15 @@ import os                       # os is used to list downloaded files after usin
                                 # and remove the downloaded file after serving it to the user
 import ffmpeg as converter      # Using ffmpeg to convert m4a audio files to mp3
 
+st.set_page_config(
+    page_title="YouTube Downloader",  # Name displayed on tab
+    page_icon=":rocket:",  # Use an emoji or a path to an image for the tab icon
+    layout="centered",  # "centered" or "wide"
+    initial_sidebar_state="auto"  # "auto", "expanded" or "collapsed"
+)
+
 st.title("YouTube Video Downloader 🎥")    # Title of the web app
+
 
 # User inputs
 url = st.text_input("Enter YouTube URL:")   # Asks for a YOUTUBE url specifically
